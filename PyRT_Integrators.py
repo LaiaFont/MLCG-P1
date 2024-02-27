@@ -61,7 +61,11 @@ class IntersectionIntegrator(Integrator):
 
     def compute_color(self, ray):
         # ASSIGNMENT 1.2: PUT YOUR CODE HERE
-        pass
+        for i in range(len(self.object_list)):
+            this_hit = self.object_list[i].intersect(ray)
+            if this_hit.has_hit:
+                return RED
+        return BLACK
 
 
 class DepthIntegrator(Integrator):
