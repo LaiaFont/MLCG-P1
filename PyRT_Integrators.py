@@ -36,8 +36,14 @@ class Integrator(ABC):
         print('Rendering Image: ' + self.get_filename())
         for x in range(0, cam.width):
             for y in range(0, cam.height):
-                pixel = RGBColor(x/cam.width, y/cam.height, 0)
-                self.scene.set_pixel(pixel, x, y)  # save pixel to pixel array
+                # 1.1
+                # pixel = RGBColor(x/cam.width, y/cam.height, 0)
+                # self.scene.set_pixel(pixel, x, y)  # save pixel to pixel array
+                # 1.2
+                d = self.scene.camera.get_direction(x,y)
+                ray = Ray(Vector3D(0.0, 0.0, 0.0), direction=d)
+                pixel = self.compute_color(ray)
+                self.scene.set_pixel(pixel, x, y)
             progress = (x / cam.width) * 100
             print('\r\tProgress: ' + str(progress) + '%', end='')
         # save image to file
@@ -61,11 +67,14 @@ class IntersectionIntegrator(Integrator):
 
     def compute_color(self, ray):
         # ASSIGNMENT 1.2: PUT YOUR CODE HERE
-        for i in range(len(self.object_list)):
-            this_hit = self.object_list[i].intersect(ray)
-            if this_hit.has_hit:
-                return RED
+        if self.scene.any_hit(ray):
+            return RED
         return BLACK
+        # for i in range(len(self.object_list)):
+        #     this_hit = self.object_list[i].intersect(ray)
+        #     if this_hit.has_hit:
+        #         return RED
+        # return BLACK
 
 
 class DepthIntegrator(Integrator):

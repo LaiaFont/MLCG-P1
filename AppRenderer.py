@@ -160,13 +160,16 @@ def cornell_box_scene(dist, side, areaLS=False):
     return scene_
 
 
-# --------------------------------------------------Set up variables
+# ---------------------------------g-----------------Set up variables
 FILENAME = 'rendered_image'
 DIRECTORY = '.\\out\\'
 
 # -------------------------------------------------Main
 # Create Integrator
-integrator = LazyIntegrator(DIRECTORY + FILENAME)
+# 1.1
+# integrator = LazyIntegrator(DIRECTORY + FILENAME)
+# 1.2
+integrator = IntersectionIntegrator(DIRECTORY + FILENAME)
 
 # Create the scene
 scene = sphere_test_scene(areaLS=False, use_env_map=False)
