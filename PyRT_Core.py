@@ -37,6 +37,10 @@ class Scene:
 
     def any_hit(self, ray):
         # ASSIGNMENT 1.2: PUT YOUR CODE HERE
+        for i in range(len(self.object_list)):
+            this_hit = self.object_list[i].intersect(ray)
+            if this_hit.has_hit:
+                return True
         return False
 
     def closest_hit(self, ray):
