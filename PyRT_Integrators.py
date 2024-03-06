@@ -1,3 +1,6 @@
+import numpy
+import numpy as np
+
 from PyRT_Common import *
 from random import randint
 
@@ -41,7 +44,10 @@ class Integrator(ABC):
                 # self.scene.set_pixel(pixel, x, y)  # save pixel to pixel array
                 # 1.2
                 d = self.scene.camera.get_direction(x,y)
-                ray = Ray(Vector3D(0.0, 0.0, 0.0), direction=d)
+                #ray = Ray(Vector3D(0.0, 0.0, 0.0), direction=d)
+                ray = Ray()
+                ray.d = d
+                ray.o = Vector3D(0.0, 0.0, 0.0)
                 pixel = self.compute_color(ray)
                 self.scene.set_pixel(pixel, x, y)
             progress = (x / cam.width) * 100
@@ -85,7 +91,7 @@ class DepthIntegrator(Integrator):
 
     def compute_color(self, ray):
         # ASSIGNMENT 1.3: PUT YOUR CODE HERE
-        pass
+        
 
 
 class NormalIntegrator(Integrator):
@@ -95,7 +101,16 @@ class NormalIntegrator(Integrator):
 
     def compute_color(self, ray):
         # ASSIGNMENT 1.3: PUT YOUR CODE HERE
-        pass
+        closest_intersection = self.scene.closest_hit(ray)
+        if closest_intersection.has_hit:
+            closest_normal = closest_intersection.normal
+            if type(closest_normal) == Vector3D:
+                closest_normal = np.array([closest_normal.x, closest_normal.y, closest_normal.z])
+            color = (closest_normal + np.array([1, 1, 1]))/2
+            return RGBColor(color[0], color[1], color[2])
+        else:
+            return BLACK
+
 
 
 class PhongIntegrator(Integrator):
