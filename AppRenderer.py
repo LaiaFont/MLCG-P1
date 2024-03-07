@@ -170,9 +170,12 @@ DIRECTORY = '.\\out\\'
 # integrator = LazyIntegrator(DIRECTORY + FILENAME)
 # 1.2
 # integrator = IntersectionIntegrator(DIRECTORY + FILENAME)
-#1.3
+# 1.3
+# integrator = DepthIntegrator(DIRECTORY + FILENAME, 5)
 # integrator = NormalIntegrator(DIRECTORY + FILENAME)
-integrator = DepthIntegrator(DIRECTORY + FILENAME, 5)
+# 1.4
+integrator = PhongIntegrator(DIRECTORY + FILENAME)
+
 
 # Create the scene
 scene = sphere_test_scene(areaLS=False, use_env_map=False)

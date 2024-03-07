@@ -120,7 +120,30 @@ class PhongIntegrator(Integrator):
         super().__init__(filename_ + '_Phong')
 
     def compute_color(self, ray):
-        # ASSIGNMENT 1.4: PUT YOUR CODE HERE
+        # ASSIGNMENT 1.4: PUT YOUR CODE HERE    
+        ambient_color = RGBColor(0, 0, 0)
+        diffuse_color = RGBColor(0, 0, 0)
+        specular_color = RGBColor(0, 0, 0)
+
+        closest_intersection = self.scene.closest_hit(ray)
+
+        if closest_intersection:
+            normal = closest_intersection.normal
+            intersection_point = closest_intersection.hit_point
+
+            for pl in self.scene.pointLights:
+                light_dir = pl.pos - intersection_point
+                intensity = pl.intensity
+
+                for element in self.scene.object_list:
+                    material = element.get_BRDF()
+                    print(material)
+
+                    diffuse_coeff = max(0, np.dot(normal, light_dir))
+                    diffuse_color += intensity * material.get_value(intersection_point, light_dir, normal) * diffuse_coeff / light_dir.length()
+        
+        print(diffuse_color)
+        # return ambient + diffuse + specular
         pass
 
 
