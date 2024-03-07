@@ -86,7 +86,13 @@ class DepthIntegrator(Integrator):
 
     def compute_color(self, ray):
         # ASSIGNMENT 1.3: PUT YOUR CODE HERE
-        
+        closest_intersection = self.scene.closest_hit(ray)
+        closest_normal = closest_intersection.normal
+        if type(closest_normal) == Vector3D:
+            closest_normal = np.array([closest_normal.x, closest_normal.y, closest_normal.z])
+        color = max(1 - (closest_intersection.hit_distance / self.max_depth), 0)
+
+        return RGBColor(color, color, color)
 
 
 class NormalIntegrator(Integrator):

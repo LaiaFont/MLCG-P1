@@ -171,7 +171,8 @@ DIRECTORY = '.\\out\\'
 # 1.2
 # integrator = IntersectionIntegrator(DIRECTORY + FILENAME)
 #1.3
-integrator = NormalIntegrator(DIRECTORY + FILENAME)
+# integrator = NormalIntegrator(DIRECTORY + FILENAME)
+integrator = DepthIntegrator(DIRECTORY + FILENAME, 5)
 
 # Create the scene
 scene = sphere_test_scene(areaLS=False, use_env_map=False)
