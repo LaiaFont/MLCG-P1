@@ -127,24 +127,37 @@ class PhongIntegrator(Integrator):
 
         closest_intersection = self.scene.closest_hit(ray)
 
-        if closest_intersection:
+        if closest_intersection.has_hit:
             normal = closest_intersection.normal
             intersection_point = closest_intersection.hit_point
 
+            hit_object_id = closest_intersection.primitive_index
+            element = self.scene.object_list[hit_object_id]
+            material = element.get_BRDF()
+            kd = material.get_kd()
+            ambient_color = kd.multiply(self.scene.i_a)
+
             for pl in self.scene.pointLights:
-                light_dir = pl.pos - intersection_point
+                light_dir = Normalize(pl.pos - intersection_point)
+                distance_to_light = Length(pl.pos - intersection_point)
                 intensity = pl.intensity
 
-                for element in self.scene.object_list:
-                    material = element.get_BRDF()
-                    print(material)
+                diffuse_value = material.get_value(light_dir, None, normal)
+                diffuse_color += intensity.multiply(diffuse_value) / (distance_to_light ** 2)
 
-                    diffuse_coeff = max(0, np.dot(normal, light_dir))
-                    diffuse_color += intensity * material.get_value(intersection_point, light_dir, normal) * diffuse_coeff / light_dir.length()
-        
-        print(diffuse_color)
-        # return ambient + diffuse + specular
-        pass
+                ks = kd #?
+                s = 1  # ?
+
+                v = Normalize(ray.o - intersection_point)
+                r = Normalize(normal - light_dir)*Dot(normal, light_dir)*2
+
+                if Dot(v, r) > 0.0:
+                    m = Dot(v, r) ** s
+                else:
+                    m = 0
+                specular_color += (ks.multiply(intensity)*m)/(distance_to_light**2)
+
+        return ambient_color + diffuse_color + specular_color
 
 
 class CMCIntegrator(Integrator):  # Classic Monte Carlo Integrator

@@ -228,6 +228,9 @@ class Lambertian(BRDF):
         else:
             return BLACK
 
+    def get_kd(self):
+        return self.kd
+
 
 # -------------------------------------------------Point Light Source Class
 class PointLight:
