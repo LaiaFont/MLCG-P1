@@ -121,9 +121,9 @@ class PhongIntegrator(Integrator):
 
     def compute_color(self, ray):
         # ASSIGNMENT 1.4: PUT YOUR CODE HERE    
-        ambient_color = RGBColor(0, 0, 0)
-        diffuse_color = RGBColor(0, 0, 0)
-        specular_color = RGBColor(0, 0, 0)
+        ambient_color = RGBColor(0.0, 0.0, 0.0)
+        diffuse_color = RGBColor(0.0, 0.0, 0.0)
+        specular_color = RGBColor(0.0, 0.0, 0.0)
 
         closest_intersection = self.scene.closest_hit(ray)
 
@@ -135,11 +135,19 @@ class PhongIntegrator(Integrator):
             element = self.scene.object_list[hit_object_id]
             material = element.get_BRDF()
             kd = material.get_kd()
-            ambient_color = kd.multiply(self.scene.i_a)
+
+            ambient_color += kd.multiply(self.scene.i_a)
 
             for pl in self.scene.pointLights:
+
                 light_dir = Normalize(pl.pos - intersection_point)
                 distance_to_light = Length(pl.pos - intersection_point)
+
+                light_ray = Ray(intersection_point, light_dir,tmax=distance_to_light)
+                first_hit = self.scene.closest_hit(light_ray)
+                if first_hit.has_hit:
+                    continue
+
                 intensity = pl.intensity
 
                 diffuse_value = material.get_value(light_dir, None, normal)
@@ -149,7 +157,7 @@ class PhongIntegrator(Integrator):
                 s = 1  # ?
 
                 v = Normalize(ray.o - intersection_point)
-                r = Normalize(normal - light_dir)*Dot(normal, light_dir)*2
+                r = Normalize(normal*Dot(normal, light_dir)*2-light_dir)
 
                 if Dot(v, r) > 0.0:
                     m = Dot(v, r) ** s
@@ -157,7 +165,9 @@ class PhongIntegrator(Integrator):
                     m = 0
                 specular_color += (ks.multiply(intensity)*m)/(distance_to_light**2)
 
-        return ambient_color + diffuse_color + specular_color
+        color = ambient_color + diffuse_color
+        return color
+        # return ambient_color + diffuse_color + specular_color
 
 
 class CMCIntegrator(Integrator):  # Classic Monte Carlo Integrator
