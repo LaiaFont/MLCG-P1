@@ -44,7 +44,6 @@ class Integrator(ABC):
                 # self.scene.set_pixel(pixel, x, y)  # save pixel to pixel array
                 # 1.2
                 d = self.scene.camera.get_direction(x,y)
-                #ray = Ray(Vector3D(0.0, 0.0, 0.0), direction=d)
                 ray = Ray()
                 ray.d = d
                 ray.o = Vector3D(0.0, 0.0, 0.0)
@@ -153,8 +152,8 @@ class PhongIntegrator(Integrator):
                 diffuse_value = material.get_value(light_dir, None, normal)
                 diffuse_color += intensity.multiply(diffuse_value) / (distance_to_light ** 2)
 
-                ks = kd #?
-                s = 1  # ?
+                ks = kd
+                s = 1
 
                 v = Normalize(ray.o - intersection_point)
                 r = Normalize(normal*Dot(normal, light_dir)*2-light_dir)
@@ -167,7 +166,6 @@ class PhongIntegrator(Integrator):
 
         color = ambient_color + diffuse_color
         return color
-        # return ambient_color + diffuse_color + specular_color
 
 
 class CMCIntegrator(Integrator):  # Classic Monte Carlo Integrator
